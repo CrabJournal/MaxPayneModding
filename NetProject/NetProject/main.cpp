@@ -39,7 +39,6 @@ X_CharacterProperties + 0x85 (X_Character + 0x2B3) = health (float)
 */
 
 extern "C" void _cdecl IGiveUCharacter();
-extern "C" void _stdcall SetFromAsm(void *FromAsmPtr); // вынужденый костыль
 
 void _stdcall FromAsm(void *character) { 
 	vector3 *pos = (vector3*)(((float*)character)+9);
