@@ -41,7 +41,7 @@ X_CharacterProperties + 0x85 (X_Character + 0x2B3) = health (float)
 extern "C" void _cdecl IGiveUCharacter();
 extern "C" void _stdcall SetFromAsm(void *FromAsmPtr); // вынужденый костыль
 
-void _stdcall FromAsm(void *character) {
+void _stdcall FromAsm(void *character) { 
 	vector3 *pos = (vector3*)(((float*)character)+9);
 	if (HookedPtr == nullptr) {
 		char buf[64];
@@ -57,7 +57,6 @@ BOOL WINAPI DllMain(
     LPVOID lpReserved ) {
 	if (fdwReason == DLL_PROCESS_ATTACH) {
 		// setting hooks
-		SetFromAsm(FromAsm);
 		Address HookPlace;
 		HookPlace.i = 0x0504403;
 		DWORD old;
