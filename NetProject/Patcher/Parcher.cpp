@@ -1,15 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
-
-const unsigned char call_ptr_imm4_opcode[] = {0xFF, 0x15};
-const unsigned char push_imm4_opcode		= 0x68;
-const unsigned char jmp_imm4_opcode		= 0xE9;
-const unsigned char push_eax_opcode		= 0x50;
-const unsigned char pushad_opcode		= 0x60;
-const unsigned char popad_opcode			= 0x61;
-const unsigned char xor_reg_reg_opcode	= 0x31;
-const unsigned char eax_eax_code			= 0xC0;
-const unsigned char mov_al_imm_opcode	= 0xB0;
+#include "x86opcodes.h"
 
 const int code_RVA_RAW_diff	= 0xA00;
 const int code_VA_RVA_diff	= 0x400000;
@@ -21,20 +12,6 @@ const int AoEP_offset_PE		= 0xA8;
 const int impLoadLibrary_VA	= 0x7CA05C;
 const int impSleep_VA		= 0x7CA074;
 const int dll_name_offs_VA	= end_of_code_RAW + 16 + code_VA_RAW_diff;
-
-
-inline void set_push_imm4(unsigned char *buf, int imm4){
-		buf[0] = push_imm4_opcode;
-		*(int*)(buf+1) = imm4;
-}
-inline void set_call_ptr_imm4(unsigned char *buf, int addr){
-		*(WORD*)(buf) = *(WORD*)call_ptr_imm4_opcode;
-		*(int*)(buf+2) = addr;
-}
-inline void set_jmp_imm4(unsigned char *buf, int dst_eip_diff){
-		buf[0] = jmp_imm4_opcode;
-		*(int*)(buf+1) = dst_eip_diff;
-}
 
 int main (){
 	
