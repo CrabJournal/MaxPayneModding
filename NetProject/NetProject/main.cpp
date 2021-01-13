@@ -125,17 +125,17 @@ void add_char(){
 	}
 	NPC->character->prop.health = 0;
 }
-int itr = 0;
+
 #define HOOKED_TO_MAX(H) ((X_Character*)((char*)(H) - 0x4E))
 #define NORM_VEC2_OTHER_AXIS(X) (sqrt(1-X*X))
 void _fastcall FromAsm(void *hooked) { 
-
-	if (Max == nullptr) {
-		Max = HOOKED_TO_MAX(hooked);
+	X_Character* lMax = HOOKED_TO_MAX(hooked);
+	if (Max != lMax) {
+		Max = lMax;
 		add_char();
 	}
 	else {
-		Max = HOOKED_TO_MAX(hooked);
+		Max = lMax;
 		if (connected == 0) {
 			if (Max->prop.is_airborne) {
 				connected = 1; 
@@ -152,38 +152,45 @@ void _fastcall FromAsm(void *hooked) {
 			if (Max->matrix[0][2] < 0)
 				to_send.rotation = -to_send.rotation;
 			on_frame(to_send, state);
-			remote_player coop_player = state.players[0];
-			X_Character* coop_player_local = NPC->character;
-			coop_player_local->pos.x = coop_player.x;
-			coop_player_local->pos.y = coop_player.y;
-			coop_player_local->pos.z = coop_player.z;
+			
+			if (state.players.size()) {
+				remote_player* coop_player = &(state.players[0]);
+				X_Character* coop_player_local = NPC->character;
+				coop_player_local->pos.x = coop_player->x;
+				coop_player_local->pos.y = coop_player->y;
+				coop_player_local->pos.z = coop_player->z;
 
-			float norm_vec_x = cos(coop_player.rotation);
-			float norm_vec_y = NORM_VEC2_OTHER_AXIS(norm_vec_x);	//cos(coop_player.rotation);
-			if (coop_player.rotation < 0)
-				norm_vec_y = -norm_vec_y;
-			coop_player_local->matrix[0][0] = norm_vec_x;
-			coop_player_local->matrix[2][2] = norm_vec_x;
-			coop_player_local->matrix[0][2] = norm_vec_y;
-			coop_player_local->matrix[2][0] = -norm_vec_y;
-			/*
-			arccos(matrix[0]) = угол поворота по горизонту(только получение)
-			установка: нормаль - вектор vector2 v
-			matrix[0] = v.x
-			matrix[8] = v.x
-			matrix[2] = v.y
-			matrix[6] = -v.y
-			*/
+				float norm_vec_x = cos(coop_player->rotation);
+				float norm_vec_y = NORM_VEC2_OTHER_AXIS(norm_vec_x);	//cos(coop_player.rotation);
+				if (coop_player->rotation < 0)
+					norm_vec_y = -norm_vec_y;
+				coop_player_local->matrix[0][0] = norm_vec_x;
+				coop_player_local->matrix[2][2] = norm_vec_x;
+				coop_player_local->matrix[0][2] = norm_vec_y;
+				coop_player_local->matrix[2][0] = -norm_vec_y;
+				/*
+				arccos(matrix[0]) = угол поворота по горизонту(только получение)
+				установка: нормаль - вектор vector2 v
+				matrix[0] = v.x
+				matrix[8] = v.x
+				matrix[2] = v.y
+				matrix[6] = -v.y
+				*/
+			}
 		}
 	}
 }
 
+int Handler(unsigned int code, struct _EXCEPTION_POINTERS* ep) { return EXCEPTION_EXECUTE_HANDLER; }
 // hooks first
 void _fastcall HookListC(node *list) {
-	if (NPC != 0){
-		NPC->character->prop.is_dead = 0;
+	__try {
+		if (NPC != 0) {
+			NPC->character->prop.is_dead = 0;
+			//NPC->character->prop.health = 0;
+		}
 	}
-	itr++;
+	__except (Handler(GetExceptionCode(), GetExceptionInformation())) {	}
 	HookedList = list;
 }
 
