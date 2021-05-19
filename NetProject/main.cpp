@@ -66,7 +66,10 @@ struct X_Character {
 	char unknown1[0x4E];
 	float matrix[3][3];			// +0x4E
 	vector3 pos;					// +0x72
-	char unknown2[0x1B0];
+	void* unk0x7E;
+	char unknown2[0x1AC];
+	// CE - bool flag0xCE;
+	// A6 - bool flag0XA6;
 	X_CharacterProperties prop;	// +0x22E
 };
 /*
@@ -89,11 +92,11 @@ struct X_Character {
 	X_Character + 0x22E = X_CharacterProperties
 
 
-	0x06D74F0, 00698EC0, 00729610, 00743D60 - реверсить не перереверсить
+	0x06D74F0, 00698EC0, 00729610, 00743D60 - Г°ГҐГўГҐГ°Г±ГЁГІГј Г­ГҐ ГЇГҐГ°ГҐГ°ГҐГўГҐГ°Г±ГЁГІГј
 
-	вызываем метод (_thiscall, но можно использовать как функцию _fastcall (this, мусор, ...) [вроде])
-	по адресу 0x00729ED0([this = (void)*(X_Character + 0x398)], (int??)*(X_Character + 0x728))
-	возвращает указатель на объект X_GlobalPainkillerSettings??
+	ГўГ»Г§Г»ГўГ ГҐГ¬ Г¬ГҐГІГ®Г¤ (_thiscall, Г­Г® Г¬Г®Г¦Г­Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј ГЄГ ГЄ ГґГіГ­ГЄГ¶ГЁГѕ _fastcall (this, Г¬ГіГ±Г®Г°, ...) [ГўГ°Г®Г¤ГҐ])
+	ГЇГ® Г Г¤Г°ГҐГ±Гі 0x00729ED0([this = (void)*(X_Character + 0x398)], (int??)*(X_Character + 0x728))
+	ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  Г®ГЎГєГҐГЄГІ X_GlobalPainkillerSettings??
 
 	*(int*)X_GlobalPainkillerSettings = painkillers_amount
 
@@ -169,8 +172,8 @@ void _fastcall FromAsm(void *hooked) {
 				coop_player_local->matrix[0][2] = norm_vec_y;
 				coop_player_local->matrix[2][0] = -norm_vec_y;
 				/*
-				arccos(matrix[0]) = угол поворота по горизонту(только получение)
-				установка: нормаль - вектор vector2 v
+				arccos(matrix[0]) = ГіГЈГ®Г« ГЇГ®ГўГ®Г°Г®ГІГ  ГЇГ® ГЈГ®Г°ГЁГ§Г®Г­ГІГі(ГІГ®Г«ГјГЄГ® ГЇГ®Г«ГіГ·ГҐГ­ГЁГҐ)
+				ГіГ±ГІГ Г­Г®ГўГЄГ : Г­Г®Г°Г¬Г Г«Гј - ГўГҐГЄГІГ®Г° vector2 v
 				matrix[0] = v.x
 				matrix[8] = v.x
 				matrix[2] = v.y
